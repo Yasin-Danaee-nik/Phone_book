@@ -17,7 +17,7 @@ class Metods_tables:
                 JOIN 
                     numbers
                     ON 
-                    users.id = numbers.user_id
+                    users.id = numbers.number_id
                 """
 
                 cur.execute(query_join)
@@ -34,7 +34,7 @@ class Metods_tables:
             try:
                 cur = self.coon.connection.cursor()
                 
-                insert_data = "INSERT INTO users(F_name, L_name) VALUES(%s, %s)"
+                insert_data = "INSERT INTO users(name, last_name) VALUES(%s, %s)"
                 cur.execute(insert_data,(F_name, L_name))
                 self.coon.connection.commit()
 
@@ -43,13 +43,13 @@ class Metods_tables:
             except Exception as error:
                 print(f"Error! {error}")
         
-    def insert_data_table_numbers(self,user_id, number, country_code):
+    def insert_data_table_numbers(self,number_id, number, country_code):
         if self.coon:
             try:
                 cur = self.coon.connection.cursor()
 
-                insert_data = "INSERT INTO numbers(user_id, number, country_code) VALUES(%s, %s, %s)"
-                cur.execute(insert_data,(user_id, number, country_code))
+                insert_data = "INSERT INTO numbers(number_id, number, country_code) VALUES(%s, %s, %s)"
+                cur.execute(insert_data,(number_id, number, country_code))
                 self.coon.connection.commit()
 
                 print(f"{country_code} {number} inserted.")
@@ -62,7 +62,7 @@ class Metods_tables:
             try:
                 cur = self.coon.connection.cursor()
 
-                qurey_show = "SELECT F_name, L_name FROM users"
+                qurey_show = "SELECT id ,name, last_name FROM users"
                 cur.execute(qurey_show)
                 rows = cur.fetchall()
                 for row in rows:
@@ -76,15 +76,16 @@ class Metods_tables:
             try:
                 cur = self.coon.connection.cursor()
 
-                qurey_show = "SELECT country_code, number FROM numbers"
+                qurey_show = "SELECT id, country_code, number FROM numbers"
                 cur.execute(qurey_show)
                 rows = cur.fetchall()
                 for row in rows:
                     print(f"ID {row[0]} COUNTRY CODE {row[1]} NUMBER {row[2]}")
-            
+
+
             except Exception as error:
                 print(f"error!: {error}")
 
 if __name__ == "__main__":
     main = Metods_tables()
-    main.show_table_users()
+    main.show_table_numbers()
