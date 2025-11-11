@@ -1,5 +1,5 @@
 from coon_db import PostgresDB
-
+from tabulate import tabulate
 
 class Login:
     def __init__(self):
@@ -21,9 +21,10 @@ class Login:
             except Exception as error:
                 print(f"Error! {error}")
         
-            qury_show = "SELECT id FROM users WHERE F_name = %s AND L_name = %s"
+            qury_show = "SELECT id FROM users WHERE name = %s AND last_name = %s"
             cur.execute(qury_show,(F_name, L_name))
             rows = cur.fetchall()
-            
-            for row in rows:
-                print(f"ID: {row[0]}, FRIST NAME: {row[1]}, LAST NAME: {row[2]}")
+            if not rows:
+                raise ValueError(f"{F_name} {L_name} not found.")
+            columns = [desc[0] for desc in cur.description]
+            print(tabulate(rows, headers=columns, tablefmt="psql"))

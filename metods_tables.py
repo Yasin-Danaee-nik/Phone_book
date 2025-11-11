@@ -1,4 +1,6 @@
 from coon_db import PostgresDB
+from tabulate import tabulate
+
 class Metods_tables:
     def __init__(self):
         self.coon  = PostgresDB(host="localhost", database="phone_book", user="yasin", password="1234")
@@ -22,9 +24,8 @@ class Metods_tables:
 
                 cur.execute(query_join)
                 rows = cur.fetchall()
-                for row in rows:
-                    print(f"ID: {row[0]}, FRIST NAME: {row[1]}, LAST NAME: {row[2]}, ID PRSON: {row[3]}, COUNTRY CODE: {row[4]}, NUMBER {row[5]}")
-
+                columns = [desc[0] for desc in cur.description]
+                print(tabulate(rows, headers=columns, tablefmt="psql"))
                     
             except Exception as error:
                 print(f"error! {error}")
@@ -65,8 +66,9 @@ class Metods_tables:
                 qurey_show = "SELECT id ,name, last_name FROM users"
                 cur.execute(qurey_show)
                 rows = cur.fetchall()
-                for row in rows:
-                    print(f"ID {row[0]} FRIST NAME {row[1]} LAST NAME {row[2]}")
+                columns = [desc[0] for desc in cur.description]
+                print(tabulate(rows, headers=columns, tablefmt="psql"))
+
             
             except Exception as error:
                 print(f"error!: {error}")
@@ -79,13 +81,55 @@ class Metods_tables:
                 qurey_show = "SELECT id, country_code, number FROM numbers"
                 cur.execute(qurey_show)
                 rows = cur.fetchall()
-                for row in rows:
-                    print(f"ID {row[0]} COUNTRY CODE {row[1]} NUMBER {row[2]}")
-
+                columns = [desc[0] for desc in cur.description]
+                print(tabulate(rows, headers=columns, tablefmt="psql"))
+                
 
             except Exception as error:
                 print(f"error!: {error}")
+        
+    def delete_data_users(self, F_name, L_name):
+        if self.coon:
+            try:
+                cur = self.coon.connection.cursor()
+
+                qurey_delete = "DELETE FROM users WHERE name = %s AND last_name = %s"
+                cur.execute(qurey_delete,(F_name, L_name))
+                rows = cur.rowcount
+                self.coon.connection.commit()
+
+                if rows > 0:
+                    print(f"{F_name} {L_name} is deleted")
+                
+                else:
+                    print(f"{F_name}, {L_name} not find!")
+            
+            except Exception as error:
+                self.coon.connection.rollback()
+                print(f"Error!: {error}")
+        
+    def delete_data_numbers(self, number, country_code):
+        if self.coon:
+            try:
+                cur = self.coon.connection.cursor()
+
+                qurey_delete = "DELETE FROM numbers WHERE country_code = %s AND number = %s"
+            
+                cur.execute(qurey_delete, (country_code, number))
+                rows = cur.rowcount
+                self.coon.connection.commit()
+
+                if rows > 0:
+                    print(f"({country_code}) {number} is deleted")
+            
+                else:
+                    print(f"({country_code}) {number} not find!")
+        
+            except Exception as error:
+                self.coon.connection.rollback()
+                print(f"Error!: {error}")
+
 
 if __name__ == "__main__":
     main = Metods_tables()
-    main.show_table_numbers()
+    main.show_data_all()

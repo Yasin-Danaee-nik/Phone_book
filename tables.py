@@ -31,9 +31,9 @@ class Tables:
 
                 create_table = """CREATE TABLE IF NOT EXISTS numbers(
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-                number VARCHAR(10) NOT NULL UNIQUE,
-                country_code CHAR(3) NOT NULL
+                number_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+                country_code CHAR(3) NOT NULL,
+                number VARCHAR(10) NOT NULL UNIQUE
                 )"""
 
                 cur.execute(create_table)
